@@ -1,0 +1,11 @@
+[project]
+name = "simple-weather-tool"
+version = "1.0.0"
+description = "Simple weather MCP tool using Open-Meteo API"
+readme = "README.md"
+requires-python = ">=3.11.9"
+dependencies = [
+    "fastmcp>=0.4.1",
+    "requests>=2.32.2",
+    "urllib3",
+]
