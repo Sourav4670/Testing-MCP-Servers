@@ -52,12 +52,41 @@ pip install -r requirements.txt
 
 ## Usage
 
-Start the MCP server:
+Start the MCP server with different transport modes:
+
+### STDIO Mode (Default - Local)
+For local integration with Claude Desktop:
 ```bash
-python mcp_server.py
+python mcp_server.py --mode stdio
 ```
 
-The server will start on host `0.0.0.0` and port `8080` using SSE transport.
+### SSE Mode (Server-Sent Events)
+For HTTP-based streaming transport:
+```bash
+python mcp_server.py --mode sse
+```
+Server will run at `http://0.0.0.0:8080/sse`
+
+### Streamable HTTP Mode
+For chunked HTTP streaming with session management:
+```bash
+python mcp_server.py --mode streamable_http
+```
+Server will run at `http://0.0.0.0:8080/mcp`
+
+### Custom Host and Port
+For SSE or streamable_http modes, customize host and port:
+```bash
+python mcp_server.py --mode sse --host localhost --port 9000
+python mcp_server.py --mode streamable_http --host 127.0.0.1 --port 5000
+```
+
+### Command-Line Arguments
+```
+--mode {stdio,sse,streamable_http}  Transport mode for the MCP server (default: stdio)
+--host HOST                          Host to bind to (default: 0.0.0.0)
+--port PORT                          Port to bind to (default: 8080)
+```
 
 ## Available Tools
 
@@ -89,12 +118,34 @@ The server will start on host `0.0.0.0` and port `8080` using SSE transport.
 Build and run the Docker container:
 ```bash
 docker build -t simple-weather-tool .
-docker run -p 8080:8080 simple-weather-tool
+
+# SSE mode
+docker run -p 8080:8080 simple-weather-tool python mcp_server.py --mode sse
+
+# Streamable HTTP mode
+docker run -p 8080:8080 simple-weather-tool python mcp_server.py --mode streamable_http
 ```
+
+## Architecture
+
+This MCP server uses:
+- **MCP Server**: Model Context Protocol server implementation
+- **Starlette**: Modern web framework for HTTP transports
+- **Uvicorn**: ASGI web server for HTTP transport modes
+
+### Transport Modes
+
+| Mode | Use Case | Endpoint |
+|------|----------|----------|
+| `stdio` | Local integration (Claude Desktop) | stdin/stdout |
+| `sse` | HTTP-based streaming | `http://0.0.0.0:8080/sse` |
+| `streamable_http` | Chunked HTTP with sessions | `http://0.0.0.0:8080/mcp` |
 
 ## Dependencies
 
-- **FastMCP**: MCP server implementation framework
+- **mcp**: Model Context Protocol server implementation
+- **Starlette**: Web application framework
+- **Uvicorn**: ASGI web server
 - **Requests**: HTTP library for API requests
 - **urllib3**: HTTP client with SSL handling
 

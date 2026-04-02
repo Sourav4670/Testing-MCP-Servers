@@ -1,4 +1,3 @@
-from mcp_server import mcp
 import requests
 from urllib.parse import quote
 import urllib3
@@ -50,24 +49,3 @@ class OpenMetoTool:
         
     def weather_tool(self, city_name: str) -> str:
         return self.get_weather(city_name)
-    
-@mcp.tool()
-def weather_tool(city_name: str) -> str:
-    """
-    Retrieve weather information for a given city using the Open-Meteo API.
-
-    Args:
-        city_name (str): The name of the city for which to retrieve weather data.
-
-    Returns:
-        str: A string containing the weather information for the specified city.
-    
-    Example:
-        city_name = "New York"
-    """
-    try:
-        open_meto = OpenMetoTool()
-        return open_meto.weather_tool(city_name)
-    except Exception as e:
-        # Log the exception or handle it as needed
-        return f"An error occurred while while invoking the tool weather tool. Here is the logs, try to analyze it and retry invoking the tool possibly with different payload. Logs: {str(e)}"
