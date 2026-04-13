@@ -4,7 +4,7 @@ A **production-ready Model Context Protocol (MCP) server** that provides
 deterministic, real-time-style travel advisory through a single tool:
 `get_travel_advice`.
 
-- **No external APIs** – all knowledge is embedded in `travel_data.py`
+- **No external APIs** – all knowledge is embedded in `tools/travel_data.py`
 - **No environment variables** – everything is configured via CLI flags
 - **Three transport modes** – stdio, SSE, and Streamable HTTP
 - **Deterministic responses** – same input always produces the same output
@@ -16,21 +16,14 @@ deterministic, real-time-style travel advisory through a single tool:
 ```
 travel-advisor-mcp/
 ├── Dockerfile
-├── pytest.ini
 ├── pyproject.toml               ← package metadata & dependencies
 ├── README.md
-├── src/
-│   └── travel_advisor/
-│       ├── __init__.py          ← sync entry-point (main())
-│       ├── __main__.py          ← python -m travel_advisor
-│       ├── server.py            ← MCP server + all 3 transport modes
-│       └── tools/
-│           ├── __init__.py      ← re-exports for convenient import
-│           ├── toolhandler.py   ← abstract base class ToolHandler
-│           ├── travel_data.py   ← static knowledge base (cities, routes, seasons)
-│           └── travel_tool.py   ← GetTravelAdviceToolHandler implementation
-└── tests/
-    └── test_travel_advisor.py   ← deterministic unit + integration tests
+├── server.py                    ← MCP server + all 3 transport modes
+└── tools/
+  ├── __init__.py              ← package marker
+  ├── toolhandler.py           ← abstract base class ToolHandler
+  ├── travel_data.py           ← static knowledge base (cities, routes, seasons)
+  └── travel_tool.py           ← GetTravelAdviceToolHandler implementation
 ```
 
 ---
@@ -51,6 +44,8 @@ source .venv/bin/activate
 pip install -e .
 ```
 
+This repository currently uses a **flat layout** (no `src/` directory).
+
 ---
 
 ## Running the Server
@@ -62,16 +57,16 @@ opened.  This is the mode used by all local MCP host applications.
 
 ```bash
 # 1. stdio mode (Claude Desktop / Cursor / VS Code)
-python -m travel_advisor
+travel-advisor-mcp
 # or equivalently:
-python -m travel_advisor --mode stdio
+python server.py --mode stdio
 
 # 2. SSE mode  
-python -m travel_advisor --mode sse --port 5000
+travel-advisor-mcp --mode sse --port 5000
 # endpoints: GET /sse  |  POST /messages/
 
 # 3. Streamable HTTP mode (MCP v1 preferred)
-python -m travel_advisor --mode streamable-http --port 5000
+travel-advisor-mcp --mode streamable-http --port 5000
 # endpoint: POST /mcp  (chunked streaming responses)
 ```
 
@@ -95,8 +90,8 @@ The `mcp.server.stdio.stdio_server()` context manager connects the process's
 {
   "mcpServers": {
     "travel-advisor": {
-      "command": "python",
-      "args": ["-m", "travel_advisor"],
+      "command": "travel-advisor-mcp",
+      "args": [],
       "cwd": "C:/path/to/travel-advisor-mcp"
     }
   }
@@ -115,7 +110,7 @@ SSE mode exposes **two** HTTP endpoints:
 | `/messages/` | POST | Client sends MCP JSON-RPC messages |
 
 ```bash
-python -m travel_advisor --mode sse --host 0.0.0.0 --port 8080
+travel-advisor-mcp --mode sse --host 127.0.0.1 --port 8080
 ```
 
 **How it works inside the code (`server.py`):**
@@ -182,7 +177,7 @@ Streamable HTTP exposes a **single** endpoint:
 | `/mcp` | POST | All MCP traffic; responses delivered as HTTP chunked streams |
 
 ```bash
-python -m travel_advisor --mode streamable-http --host 0.0.0.0 --port 8080
+travel-advisor-mcp --mode streamable-http --host 127.0.0.1 --port 8080
 ```
 
 **How it works inside the code (`server.py`):**
@@ -278,10 +273,10 @@ docker run -p 8080:8080 travel-advisor-mcp --mode sse --host 0.0.0.0 --port 8080
 
 ```bash
 pip install pytest pytest-asyncio
-pytest tests/ -v
+pytest -v
 ```
 
-All tests are **deterministic** and require no network access.
+If no tests are present yet, `pytest` may report "collected 0 items".
 
 ---
 
@@ -353,9 +348,9 @@ All tests are **deterministic** and require no network access.
 
 Adding a new tool takes three steps:
 
-1. **Create a new handler** in `src/travel_advisor/tools/my_new_tool.py`
+1. **Create a new handler** in `tools/my_new_tool.py`
    subclassing `ToolHandler`.
 2. **Import and register** it in `server.py::register_all_tools()`.
-3. **Add tests** in `tests/test_travel_advisor.py`.
+3. **(Recommended)** add tests under a new `tests/` folder.
 
 No changes to the transport layer, protocol callbacks, or any other file.

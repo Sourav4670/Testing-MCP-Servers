@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "travel-advisor": {
+      "command": "python",
+      "args": [
+        "server.py",
+        "--mode",
+        "stdio"
+      ],
+      "cwd": "C:/Users/sdas14/OneDrive - Capgemini/Desktop/RAISE/MCP_Tools-main/travel-advisor-mcp",
+      "env": {}
+    }
+  }
+}
