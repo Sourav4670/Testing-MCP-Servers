@@ -56,6 +56,7 @@ from typing import Any, Dict
 import uvicorn
 from starlette.applications import Starlette
 from starlette.middleware.cors import CORSMiddleware
+from starlette.responses import JSONResponse
 from starlette.routing import Mount, Route
 
 from mcp.server import Server
@@ -223,9 +224,14 @@ def create_sse_starlette_app(mcp_server: Server) -> Starlette:
                 )
                 logger.info("SSE: session closed")
 
+    async def _health_endpoint(_request) -> JSONResponse:
+        """Kubernetes/ALB liveness probe endpoint."""
+        return JSONResponse({"status": "ok"})
+
     starlette_app = Starlette(
         debug=False,
         routes=[
+            Route("/health", endpoint=_health_endpoint),
             Route("/sse", endpoint=_SSEEndpoint()),
             Mount("/messages/", app=sse_transport.handle_post_message),
         ],
@@ -285,6 +291,10 @@ def create_streamable_http_app(mcp_server: Server) -> Starlette:
         async def __call__(self, scope, receive, send) -> None:
             await session_manager.handle_request(scope, receive, send)
 
+    async def _health_endpoint(_request) -> JSONResponse:
+        """Kubernetes/ALB liveness probe endpoint."""
+        return JSONResponse({"status": "ok"})
+
     @contextlib.asynccontextmanager
     async def _lifespan(starlette_app: Starlette) -> AsyncIterator[None]:
         """
@@ -303,6 +313,7 @@ def create_streamable_http_app(mcp_server: Server) -> Starlette:
     starlette_app = Starlette(
         debug=False,
         routes=[
+            Route("/health", endpoint=_health_endpoint),
             Route("/mcp", endpoint=_StreamableHTTPRoute()),
         ],
         lifespan=_lifespan,
