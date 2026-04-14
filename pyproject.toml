@@ -35,7 +35,7 @@ include = ["tools*"]
 internet-speed-check = "server:cli_main"
 
 [project.urls]
-Source = "https://github.com/RAISE/internet-speed-test"
+Source = "https://github.com/RAISE/internet-speed-check"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
