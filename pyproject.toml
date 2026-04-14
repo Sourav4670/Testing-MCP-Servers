@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "internet-speed-test-mcp"
+version = "1.0.0"
+authors = [
+  { name = "RAISE Team" },
+]
+description = "A production-ready MCP server providing real-time internet speed measurements — supports stdio, SSE, and Streamable HTTP modes."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "mcp[cli]>=1.12.0",
+  "starlette>=0.27.0",
+  "uvicorn>=0.20.0",
+  "httpx>=0.27.0",
+]
+
+[tool.setuptools]
+py-modules = ["server"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["tools*"]
+
+[project.scripts]
+internet-speed-test-mcp = "server:cli_main"
+
+[project.urls]
+Source = "https://github.com/RAISE/internet-speed-test-mcp"
