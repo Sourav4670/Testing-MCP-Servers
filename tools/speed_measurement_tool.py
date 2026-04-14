@@ -19,7 +19,7 @@ from mcp.types import EmbeddedResource, ImageContent, TextContent, Tool
 
 from .toolhandler import ToolHandler
 
-logger = logging.getLogger("internet-speed-test")
+logger = logging.getLogger("internet-speed-check")
 
 # Default URLs for measurement
 GITHUB_USERNAME = "inventer-dev"

@@ -81,13 +81,13 @@ logging.basicConfig(
     format="%(asctime)s  %(levelname)-8s  %(name)s  %(message)s",
     datefmt="%Y-%m-%dT%H:%M:%S",
 )
-logger = logging.getLogger("internet-speed-test")
+logger = logging.getLogger("internet-speed-check")
 
 # ---------------------------------------------------------------------------
 # MCP Server instance
 # ---------------------------------------------------------------------------
 
-app = Server("internet-speed-test-mcp")
+app = Server("internet-speed-check")
 
 # ---------------------------------------------------------------------------
 # Tool handler registry
@@ -368,7 +368,7 @@ async def main() -> None:
     No environment variables are read.  All configuration is explicit.
     """
     parser = argparse.ArgumentParser(
-        prog="internet-speed-test-mcp",
+        prog="internet-speed-check",
         description="Internet Speed Test MCP Server",
     )
     parser.add_argument(

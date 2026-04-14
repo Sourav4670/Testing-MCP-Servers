@@ -1,1 +1,1 @@
-"""Test suite for internet-speed-test-mcp"""
+"""Test suite for internet-speed-check"""

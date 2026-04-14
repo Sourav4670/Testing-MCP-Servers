@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "internet-speed-test-mcp"
+name = "internet-speed-check"
 version = "1.0.0"
 authors = [
   { name = "RAISE Team" },
@@ -32,10 +32,10 @@ where = ["."]
 include = ["tools*"]
 
 [project.scripts]
-internet-speed-test-mcp = "server:cli_main"
+internet-speed-check = "server:cli_main"
 
 [project.urls]
-Source = "https://github.com/RAISE/internet-speed-test-mcp"
+Source = "https://github.com/RAISE/internet-speed-test"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

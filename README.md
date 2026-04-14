@@ -18,7 +18,7 @@ real-time internet speed measurements through multiple tools:
 ## Folder Structure
 
 ```
-internet-speed-test-mcp/
+internet-speed-check/
 ├── Dockerfile
 ├── pyproject.toml               ← package metadata & dependencies
 ├── README.md
@@ -142,7 +142,7 @@ Endpoint:
 
 1. **Clone or navigate to the project directory:**
    ```bash
-   cd internet-speed-test-mcp
+   cd internet-speed-check
    ```
 
 2. **Install dependencies:**
@@ -176,14 +176,14 @@ In **Claude Settings > Model Preferences > MCP Servers**, add:
 ```json
 {
   "mcpServers": {
-    "internet-speed-test": {
+    "internet-speed-check": {
       "command": "python",
       "args": [
         "C:\\path\\to\\server.py",
         "--mode",
         "stdio"
       ],
-      "cwd": "C:\\path\\to\\internet-speed-test-mcp"
+      "cwd": "C:\\path\\to\\internet-speed-check"
     }
   }
 }
@@ -292,8 +292,8 @@ After=network.target
 [Service]
 Type=simple
 User=mcp
-WorkingDirectory=/opt/internet-speed-test-mcp
-ExecStart=/usr/bin/python /opt/internet-speed-test-mcp/server.py --mode sse --port 8080
+WorkingDirectory=/opt/internet-speed-check
+ExecStart=/usr/bin/python /opt/internet-speed-check/server.py --mode sse --port 8080
 Restart=always
 
 [Install]
