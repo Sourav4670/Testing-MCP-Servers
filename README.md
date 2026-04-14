@@ -233,7 +233,24 @@ The server uses a modular **tool handler** pattern:
 
 ---
 
-## Testing
+## Running Tests
+
+```bash
+# Install test dependencies
+pip install -e ".[dev]"
+
+# Run all tests
+pytest -v
+
+# Run a specific test file
+pytest tests/test_speed_test_tool.py -v
+```
+
+If no tests are present yet, `pytest` may report "collected 0 items".
+
+---
+
+## Manual Testing
 
 ```bash
 # Run a quick download test
@@ -282,6 +299,18 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 ```
+
+---
+
+## Extending the Server
+
+Adding a new tool takes three steps:
+
+1. Create a new handler in `tools/my_new_tool.py` subclassing `ToolHandler`.
+2. Import and register it in `server.py::register_all_tools()`.
+3. (Recommended) Add tests under `tests/` folder.
+
+No changes to the transport layer, protocol callbacks, or any other file.
 
 ---
 

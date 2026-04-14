@@ -65,7 +65,7 @@ from mcp.server.streamable_http_manager import StreamableHTTPSessionManager
 from mcp.types import EmbeddedResource, ImageContent, TextContent, Tool
 
 from tools.toolhandler import ToolHandler
-from tools.speed_test_tool import (
+from tools.speed_measurement_tool import (
     MeasureDownloadSpeedToolHandler,
     MeasureUploadSpeedToolHandler,
     MeasureLatencyToolHandler,

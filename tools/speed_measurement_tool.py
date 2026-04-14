@@ -1,9 +1,9 @@
 """
-speed_test_tool.py – MCP Tool Handlers for Internet Speed Tests
+speed_measurement_tool.py – MCP Tool Handlers for Internet Speed Measurements
 
 This module contains the tool handlers for measuring download speed,
 upload speed, latency, and jitter. All measurements use incremental
-testing methodology inspired by SpeedOf.Me.
+measurement methodology inspired by SpeedOf.Me.
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ from .toolhandler import ToolHandler
 
 logger = logging.getLogger("internet-speed-test")
 
-# Default URLs for testing
+# Default URLs for measurement
 GITHUB_USERNAME = "inventer-dev"
 GITHUB_REPO = "speed-test-files"
 GITHUB_BRANCH = "main"
@@ -110,7 +110,7 @@ class MeasureDownloadSpeedToolHandler(ToolHandler):
     """
     Handles the ``measure_download_speed`` MCP tool.
 
-    Uses incremental file sizes to find the optimal test size that takes
+    Uses incremental file sizes to find the optimal measurement size that takes
     at least 8 seconds to download.
     """
 
@@ -124,7 +124,7 @@ class MeasureDownloadSpeedToolHandler(ToolHandler):
             description=(
                 "Measure internet download speed using incremental file sizes. "
                 "Starts with small files and progressively increases size until "
-                "the test sustains for the specified duration (1-8 seconds)."
+                "the measurement sustains for the specified duration (1-8 seconds)."
             ),
             inputSchema={
                 "$schema": "http://json-schema.org/draft-07/schema#",
@@ -137,7 +137,7 @@ class MeasureDownloadSpeedToolHandler(ToolHandler):
                         "title": "Maximum File Size",
                         "default": "128MB",
                         "enum": SIZE_PROGRESSION,
-                        "description": "Maximum file size to test up to",
+                        "description": "Maximum file size to measure up to",
                     },
                     "sustain_time": {
                         "type": "integer",
@@ -145,7 +145,7 @@ class MeasureDownloadSpeedToolHandler(ToolHandler):
                         "default": 8,
                         "minimum": 1,
                         "maximum": 8,
-                        "description": "Target duration for each download test (1-8 seconds)",
+                        "description": "Target duration for each download measurement (1-8 seconds)",
                     },
                 },
                 "required": [],
@@ -155,7 +155,7 @@ class MeasureDownloadSpeedToolHandler(ToolHandler):
     async def run_tool(
         self, args: dict
     ) -> Sequence[TextContent | ImageContent | EmbeddedResource]:
-        """Execute download speed test."""
+        """Execute download speed measurement."""
         size_limit = args.get("size_limit", "128MB")
         sustain_time = max(
             MIN_TEST_DURATION,
@@ -163,7 +163,7 @@ class MeasureDownloadSpeedToolHandler(ToolHandler):
         )
 
         logger.info(
-            "Starting download speed test: size_limit=%s, sustain_time=%s",
+            "Starting download speed measurement: size_limit=%s, sustain_time=%s",
             size_limit,
             sustain_time,
         )
@@ -224,12 +224,12 @@ class MeasureDownloadSpeedToolHandler(ToolHandler):
                         break
 
                 except Exception as e:
-                    logger.error("Error during download test for %s: %s", size_key, e)
+                    logger.error("Error during download measurement for %s: %s", size_key, e)
                     continue
 
         if final_result:
             response_text = (
-                f"**Download Speed Test Results**\n\n"
+                f"**Download Speed Measurement Results**\n\n"
                 f"- **Speed**: {final_result['download_speed']} Mbps\n"
                 f"- **File Size**: {final_result['size']}\n"
                 f"- **Elapsed Time**: {final_result['elapsed_time']}s\n"
@@ -243,7 +243,7 @@ class MeasureDownloadSpeedToolHandler(ToolHandler):
             return [
                 TextContent(
                     type="text",
-                    text="Download speed test failed. Unable to reach test servers.",
+                    text="Download speed measurement failed. Unable to reach measurement servers.",
                 )
             ]
 
@@ -252,7 +252,7 @@ class MeasureUploadSpeedToolHandler(ToolHandler):
     """
     Handles the ``measure_upload_speed`` MCP tool.
 
-    Uses incremental file sizes to find the optimal test size that takes
+    Uses incremental file sizes to find the optimal measurement size that takes
     at least 8 seconds to upload.
     """
 
@@ -266,7 +266,7 @@ class MeasureUploadSpeedToolHandler(ToolHandler):
             description=(
                 "Measure internet upload speed using incremental file sizes. "
                 "Starts with small files and progressively increases size until "
-                "the test sustains for the specified duration (1-8 seconds)."
+                "the measurement sustains for the specified duration (1-8 seconds)."
             ),
             inputSchema={
                 "$schema": "http://json-schema.org/draft-07/schema#",
@@ -279,7 +279,7 @@ class MeasureUploadSpeedToolHandler(ToolHandler):
                         "title": "Maximum File Size",
                         "default": "128MB",
                         "enum": SIZE_PROGRESSION,
-                        "description": "Maximum file size to test up to",
+                        "description": "Maximum file size to measure up to",
                     },
                     "sustain_time": {
                         "type": "integer",
@@ -287,7 +287,7 @@ class MeasureUploadSpeedToolHandler(ToolHandler):
                         "default": 8,
                         "minimum": 1,
                         "maximum": 8,
-                        "description": "Target duration for each upload test (1-8 seconds)",
+                        "description": "Target duration for each upload measurement (1-8 seconds)",
                     },
                 },
                 "required": [],
@@ -297,7 +297,7 @@ class MeasureUploadSpeedToolHandler(ToolHandler):
     async def run_tool(
         self, args: dict
     ) -> Sequence[TextContent | ImageContent | EmbeddedResource]:
-        """Execute upload speed test."""
+        """Execute upload speed measurement."""
         size_limit = args.get("size_limit", "128MB")
         sustain_time = max(
             MIN_TEST_DURATION,
@@ -305,7 +305,7 @@ class MeasureUploadSpeedToolHandler(ToolHandler):
         )
 
         logger.info(
-            "Starting upload speed test: size_limit=%s, sustain_time=%s",
+            "Starting upload speed measurement: size_limit=%s, sustain_time=%s",
             size_limit,
             sustain_time,
         )
@@ -348,12 +348,12 @@ class MeasureUploadSpeedToolHandler(ToolHandler):
                         break
 
                 except Exception as e:
-                    logger.error("Error during upload test for %s: %s", size_key, e)
+                    logger.error("Error during upload measurement for %s: %s", size_key, e)
                     continue
 
         if final_result:
             response_text = (
-                f"**Upload Speed Test Results**\n\n"
+                f"**Upload Speed Measurement Results**\n\n"
                 f"- **Speed**: {final_result['upload_speed']} Mbps\n"
                 f"- **File Size**: {final_result['size']}\n"
                 f"- **Elapsed Time**: {final_result['elapsed_time']}s\n"
@@ -366,7 +366,7 @@ class MeasureUploadSpeedToolHandler(ToolHandler):
             return [
                 TextContent(
                     type="text",
-                    text="Upload speed test failed. Unable to reach upload endpoint.",
+                    text="Upload speed measurement failed. Unable to reach upload endpoint.",
                 )
             ]
 
@@ -388,7 +388,7 @@ class MeasureLatencyToolHandler(ToolHandler):
             title="Measure Latency",
             description=(
                 "Measure network latency (round-trip time) by making multiple "
-                "small HTTP requests to a test server."
+                "small HTTP requests to a measurement server."
             ),
             inputSchema={
                 "$schema": "http://json-schema.org/draft-07/schema#",
@@ -448,7 +448,7 @@ class MeasureLatencyToolHandler(ToolHandler):
             return [
                 TextContent(
                     type="text",
-                    text="Latency measurement failed. Unable to reach test server.",
+                    text="Latency measurement failed. Unable to reach measurement server.",
                 )
             ]
 
@@ -457,7 +457,7 @@ class RunFullSpeedTestToolHandler(ToolHandler):
     """
     Handles the ``run_full_speed_test`` MCP tool.
 
-    Runs a complete speed test including download speed, upload speed,
+    Runs a complete speed measurement including download speed, upload speed,
     and latency measurements.
     """
 
@@ -470,23 +470,23 @@ class RunFullSpeedTestToolHandler(ToolHandler):
     def get_tool_description(self) -> Tool:
         return Tool(
             name=self.name,
-            title="Run Full Speed Test",
+            title="Run Full Speed Measurement",
             description=(
-                "Run a comprehensive internet speed test including download speed, "
+                "Run a comprehensive internet speed measurement including download speed, "
                 "upload speed, and latency measurements."
             ),
             inputSchema={
                 "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
-                "title": "RunFullSpeedTestInput",
+                "title": "RunFullSpeedMeasurementInput",
                 "additionalProperties": False,
                 "properties": {
                     "test_size": {
                         "type": "string",
-                        "title": "Test Size",
+                        "title": "Measurement Size",
                         "default": "64MB",
                         "enum": SIZE_PROGRESSION,
-                        "description": "Maximum file size to test up to",
+                        "description": "Maximum file size to measure up to",
                     },
                 },
                 "required": [],
@@ -496,10 +496,10 @@ class RunFullSpeedTestToolHandler(ToolHandler):
     async def run_tool(
         self, args: dict
     ) -> Sequence[TextContent | ImageContent | EmbeddedResource]:
-        """Execute full speed test."""
+        """Execute full speed measurement."""
         test_size = args.get("test_size", "64MB")
 
-        logger.info("Starting full speed test with test_size=%s", test_size)
+        logger.info("Starting full speed measurement with test_size=%s", test_size)
 
         results = []
 
