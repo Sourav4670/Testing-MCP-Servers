@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir -e .
 
 COPY . .
 
-EXPOSE 5051
+EXPOSE 5053
 #ENTRYPOINT ["python", "server.py"]
 ENTRYPOINT ["internet-speed-test"]
 CMD ["--mode", "streamable-http", "--host", "0.0.0.0", "--port", "5053"]
