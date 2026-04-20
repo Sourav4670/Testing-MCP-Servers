@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "weather-advisor": {
+      "command": "python",
+      "args": [
+        "server.py",
+        "--mode",
+        "stdio"
+      ],
+      "cwd": "C:/path/to/Testing-MCP-Servers",
+      "env": {}
+    }
+  }
+}

@@ -1,3 +1,10 @@
-from .weather_tool import OpenMetoTool
+"""Tools sub-package for the Weather Advisor MCP Server."""
 
-__all__ = ["OpenMetoTool"]
+from .toolhandler import ToolHandler
+from .weather_tool import GetWeatherToolHandler, OpenMeteoTool
+
+__all__ = [
+    "ToolHandler",
+    "GetWeatherToolHandler",
+    "OpenMeteoTool",
+]

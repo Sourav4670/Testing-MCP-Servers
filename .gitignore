@@ -1,0 +1,4 @@
+.venv/
+mcp.json
+__pycache__/
+simple_weather_mcp.egg-info/
