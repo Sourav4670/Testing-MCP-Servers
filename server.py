@@ -26,6 +26,7 @@ import argparse
 import asyncio
 import contextlib
 import logging
+import os
 import sys
 import traceback
 from collections.abc import AsyncIterator, Sequence
@@ -161,10 +162,15 @@ def create_sse_starlette_app(mcp_server: Server) -> Starlette:
     async def _health_endpoint(_request) -> JSONResponse:
         return JSONResponse({"status": "ok"})
 
+    async def _root_endpoint(_request) -> JSONResponse:
+        return JSONResponse({"status": "ok", "transport": "sse"})
+
     starlette_app = Starlette(
         debug=False,
         routes=[
+            Route("/", endpoint=_root_endpoint),
             Route("/health", endpoint=_health_endpoint),
+            Route("/healthz", endpoint=_health_endpoint),
             Route("/sse", endpoint=_SSEEndpoint()),
             Mount("/messages/", app=sse_transport.handle_post_message),
         ],
@@ -202,6 +208,9 @@ def create_streamable_http_app(mcp_server: Server) -> Starlette:
     async def _health_endpoint(_request) -> JSONResponse:
         return JSONResponse({"status": "ok"})
 
+    async def _root_endpoint(_request) -> JSONResponse:
+        return JSONResponse({"status": "ok", "transport": "streamable-http"})
+
     @contextlib.asynccontextmanager
     async def _lifespan(_starlette_app: Starlette) -> AsyncIterator[None]:
         async with session_manager.run():
@@ -210,7 +219,9 @@ def create_streamable_http_app(mcp_server: Server) -> Starlette:
     starlette_app = Starlette(
         debug=False,
         routes=[
+            Route("/", endpoint=_root_endpoint),
             Route("/health", endpoint=_health_endpoint),
+            Route("/healthz", endpoint=_health_endpoint),
             Route("/mcp", endpoint=_StreamableHTTPRoute()),
         ],
         lifespan=_lifespan,
@@ -269,6 +280,23 @@ async def run_server(mode: str, host: str = "0.0.0.0", port: int = 8080) -> None
 
 async def main() -> None:
     """Parse CLI arguments and start the server."""
+    def _normalize_mode(raw_mode: str) -> str:
+        mode = (raw_mode or "").strip().lower().replace("_", "-")
+        return mode
+
+    env_transport_mode = _normalize_mode(os.getenv("TRANSPORT_TYPE", ""))
+    if env_transport_mode not in {"stdio", "sse", "streamable-http"}:
+        env_transport_mode = ""
+
+    # Default to streamable-http for containerized deployment when APP_PORT is provided.
+    default_mode = env_transport_mode or ("streamable-http" if os.getenv("APP_PORT") else "stdio")
+
+    default_host = os.getenv("APP_HOST", "0.0.0.0")
+    try:
+        default_port = int(os.getenv("APP_PORT", "8080"))
+    except ValueError:
+        default_port = 8080
+
     parser = argparse.ArgumentParser(
         prog="simple-weather-mcp",
         description="Real-Time Weather Advisor MCP Server",
@@ -276,18 +304,18 @@ async def main() -> None:
     parser.add_argument(
         "--mode",
         choices=["stdio", "sse", "streamable-http", "streamable_http"],
-        default="stdio",
+        default=default_mode,
         help="Transport mode (default: stdio)",
     )
     parser.add_argument(
         "--host",
-        default="0.0.0.0",
+        default=default_host,
         help="Bind host for HTTP modes (default: 0.0.0.0)",
     )
     parser.add_argument(
         "--port",
         type=int,
-        default=8080,
+        default=default_port,
         help="Bind port for HTTP modes (default: 8080)",
     )
     args = parser.parse_args()

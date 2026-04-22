@@ -63,6 +63,14 @@ simple-weather-mcp --mode streamable-http --host 0.0.0.0 --port 8080
 
 Endpoint:
 - `POST /mcp`
+- `GET /health` (health check)
+- `GET /healthz` (health check)
+- `GET /` (basic readiness check)
+
+Environment variables supported (for container/Kubernetes deployments):
+- `TRANSPORT_TYPE`: `SSE` or `STREAMABLE_HTTP`
+- `APP_HOST`: bind host (default `0.0.0.0`)
+- `APP_PORT`: bind port (default `8080`)
 
 ## Docker
 
@@ -75,6 +83,9 @@ docker run -p 5051:5051 simple-weather-mcp
 
 # Run in SSE mode
 docker run -p 5051:5051 simple-weather-mcp --mode sse --host 0.0.0.0 --port 5051
+
+# Run with environment-based startup (matches ARM deployment style)
+docker run -e TRANSPORT_TYPE=STREAMABLE_HTTP -e APP_PORT=5052 -p 5052:5052 simple-weather-mcp
 ```
 
 ## Tool Reference: `get_weather`

@@ -11,4 +11,6 @@ COPY . .
 
 EXPOSE 5052
 ENTRYPOINT ["simple-weather-mcp"]
-CMD ["--mode", "streamable-http", "--host", "0.0.0.0", "--port", "5052"]
+ENV TRANSPORT_TYPE=streamable-http
+ENV APP_HOST=0.0.0.0
+ENV APP_PORT=5052
