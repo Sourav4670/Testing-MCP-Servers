@@ -9,6 +9,6 @@ RUN pip install --no-cache-dir -e .
 
 COPY . .
 
-EXPOSE 5051
+EXPOSE 5052
 ENTRYPOINT ["simple-weather-mcp"]
-CMD ["--mode", "streamable-http", "--host", "0.0.0.0", "--port", "5051"]
+CMD ["--mode", "streamable-http", "--host", "0.0.0.0", "--port", "5052"]
