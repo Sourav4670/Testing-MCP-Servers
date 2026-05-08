@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "simple-calculator": {
+      "command": "python",
+      "args": [
+        "server.py",
+        "--mode",
+        "stdio"
+      ],
+      "cwd": "C:/path/to/MCP_Tools_streamable_http/simple-calculator-tool",
+      "env": {}
+    }
+  }
+}
